@@ -1,26 +1,26 @@
 {
-  "name": "homebridge-fireswitch",
+  "name": "homebridge-firegarage",
   "version": "0.0.4",
-  "description": "Homebridge Switch Plugin for Firebase",
+  "description": "Homebridge Garage Plugin for Firebase",
   "main": "index.js",
   "scripts": {
     "test": "node test.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mlaanderson/homebridge-fireswitch.git"
+    "url": "git+https://github.com/salqadri/homebridge-firegarage.git"
   },
   "keywords": [
     "homebridge-plugin",
-    "switch",
+    "garage",
     "firebase"
   ],
-  "author": "Michael Anderson",
+  "author": "Syed Salman Qadri",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/mlaanderson/homebridge-fireswitch/issues"
+    "url": "https://github.com/salqadri/homebridge-firegarage/issues"
   },
-  "homepage": "https://github.com/mlaanderson/homebridge-fireswitch#readme",
+  "homepage": "https://github.com/salqadri/homebridge-firegarage#readme",
   "dependencies": {
     "firebase": "^2.4.1"
   },
