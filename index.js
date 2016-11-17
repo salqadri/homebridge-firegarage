@@ -29,7 +29,7 @@ class fireGarage {
             if (authData) {
                 // parse the path
                 var uid = self._db.getAuth().uid;
-                var paths = [this.target_state_path, this.current_state_path, this.trigger_path];
+                var paths = [self.target_state_path, self.current_state_path, self.trigger_path];
                 for (var i = 0; i < paths.length; i++) {
                     //Do something
                     paths[i] = paths[i].replace("{$uid}", uid);
@@ -60,16 +60,22 @@ class fireGarage {
     }
 
     getTargetState(callback) {
+        var self = this;
         this.log("firegarage: getTargetState requested");
         this._db.child(this.target_state_path).once("value", function(snapshot) {
-            callback(null, snapshot.val());
+            var val = snapshot.val();
+            self.log("firegarage: getTargetState is " + val);
+            callback(null, val);
         });
     }
 
     getCurrentState(callback) {
+        var self = this;
         this.log("firegarage: getCurrentState requested");
         this._db.child(this.current_state_path).once("value", function(snapshot) {
-            callback(null, snapshot.val());
+            var val = snapshot.val();
+            self.log("firegarage: getCurrentState is " + val);
+            callback(null, val);
         });
     }
     
