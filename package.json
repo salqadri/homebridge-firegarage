@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/salqadri/homebridge-firegarage#readme",
   "dependencies": {
-    "firebase": "^2.4.1"
+    "firebase": ">=3.0.0"
   },
   "engines": {
     "homebridge": ">=0.2.0"
