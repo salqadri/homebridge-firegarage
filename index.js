@@ -87,7 +87,7 @@ class fireGarage {
     getTargetState(callback) {
         var self = this;
         this.log("firegarage: getTargetState requested");
-        this._db.child(this.target_state_path).once("value", function(snapshot) {
+        this._db.ref(this.target_state_path).once("value", function(snapshot) {
             var val = snapshot.val();
             self.log("firegarage: getTargetState is " + val);
             callback(null, val);
@@ -97,7 +97,7 @@ class fireGarage {
     getCurrentState(callback) {
         var self = this;
         this.log("firegarage: getCurrentState requested");
-        this._db.child(this.current_state_path).once("value", function(snapshot) {
+        this._db.ref(this.current_state_path).once("value", function(snapshot) {
             var val = snapshot.val();
             self.log("firegarage: getCurrentState is " + val);
             callback(null, val);
@@ -106,7 +106,7 @@ class fireGarage {
     
     setTargetState(val, callback) {
         this.log("firegarage: setTargetState " + val);
-        this._db.child(this.target_state_path).set(val).then(function() {
+        this._db.ref(this.target_state_path).set(val).then(function() {
             callback(null, val);
         })
     }
