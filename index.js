@@ -44,6 +44,12 @@ class fireGarage {
                 //Do something
                 paths[i] = paths[i].replace("{$uid}", uid);
             }
+		self._db.ref(self.current_state_path).on("value", function(snapshot) {
+			var val = snapshot.val();
+			self.log("State of garage changed: " + val);
+			self.currentDoorState.setValue(val);
+			self.targetDoorState.setValue(val);
+		});
           } else {
             // User logged out
             self._authorize();
@@ -105,10 +111,16 @@ class fireGarage {
     }
     
     setTargetState(val, callback) {
+	var self = this;
         this.log("firegarage: setTargetState " + val);
         this._db.ref(this.target_state_path).set(val).then(function() {
-            callback(null, val);
-        })
+		self._db.ref(self.trigger_path).set(1).then(function() {
+      			setTimeout(function() {
+				self._db.ref(self.trigger_path).set(0);
+				callback(null, val);
+			}, 500);
+		});
+        });
     }
     
     identify(callback) {
