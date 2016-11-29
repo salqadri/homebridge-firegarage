@@ -35,25 +35,25 @@ class fireGarage {
         this._auth = firebase.auth();
 
         this._auth.onAuthStateChanged(function(user) {
-          if (user) {
-            // User signed in!
-            var uid = user.uid;
-            self.log("firegarage: Authenticated");
-            var paths = [self.target_state_path, self.current_state_path, self.trigger_path];
-            for (var i = 0; i < paths.length; i++) {
-                //Do something
-                paths[i] = paths[i].replace("{$uid}", uid);
+            if (user) {
+                // User signed in!
+                var uid = user.uid;
+                self.log("firegarage: Authenticated");
+                var paths = [self.target_state_path, self.current_state_path, self.trigger_path];
+                for (var i = 0; i < paths.length; i++) {
+                    //Do something
+                    paths[i] = paths[i].replace("{$uid}", uid);
+                }
+                self._db.ref(self.current_state_path).on("value", function(snapshot) {
+                    var val = snapshot.val();
+                    self.log("State of garage changed: " + val);
+                    self.currentDoorState.setValue(val);
+                    self.targetDoorState.setValue(val);
+                });
+            } else {
+                // User logged out
+                self._authorize();
             }
-		self._db.ref(self.current_state_path).on("value", function(snapshot) {
-			var val = snapshot.val();
-			self.log("State of garage changed: " + val);
-			self.currentDoorState.setValue(val);
-			self.targetDoorState.setValue(val);
-		});
-          } else {
-            // User logged out
-            self._authorize();
-          }
         });
     }
     
@@ -63,28 +63,28 @@ class fireGarage {
             case 'password':
                 self.log("firegarage: authWithPassword");
                 self._auth.signInWithEmailAndPassword(self.auth_credentials["email"], self.auth_credentials["password"]).catch(function(error) {
-                  // Handle Errors here.
-                  var errorCode = error.code;
-                  var errorMessage = error.message;
-                  self.log("Auth Error " + errorCode + ": " + error.message);
+                    // Handle Errors here.
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    self.log("Auth Error " + errorCode + ": " + error.message);
                 });
                 break;
             case 'customtoken':
                 self.log("firegarage: authWithCustomToken");
                 firebase.auth().signInWithCustomToken(self.auth_credentials).catch(function(error) {
-                  // Handle Errors here.
-                  var errorCode = error.code;
-                  var errorMessage = error.message;
-                  self.log("Auth Error " + errorCode + ": " + error.message);
+                    // Handle Errors here.
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    self.log("Auth Error " + errorCode + ": " + error.message);
                 });
                 break;
             case 'anonymously':
                 self.log("firegarage: authAnonymously");
                 firebase.auth().signInAnonymously().catch(function(error) {
-                  // Handle Errors here.
-                  var errorCode = error.code;
-                  var errorMessage = error.message;
-                  self.log("Auth Error " + errorCode + ": " + error.message);
+                    // Handle Errors here.
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    self.log("Auth Error " + errorCode + ": " + error.message);
                 });
                 break;
         }
@@ -111,15 +111,15 @@ class fireGarage {
     }
     
     setTargetState(val, callback) {
-	var self = this;
+    var self = this;
         this.log("firegarage: setTargetState " + val);
         this._db.ref(this.target_state_path).set(val).then(function() {
-		self._db.ref(self.trigger_path).set(1).then(function() {
-      			setTimeout(function() {
-				self._db.ref(self.trigger_path).set(0);
-				callback(null, val);
-			}, 500);
-		});
+            self._db.ref(self.trigger_path).set(1).then(function() {
+                    setTimeout(function() {
+                    self._db.ref(self.trigger_path).set(0);
+                    callback(null, val);
+                }, 500);
+            });
         });
     }
     
@@ -139,9 +139,9 @@ class fireGarage {
 
         this.infoService = new Service.AccessoryInformation();
         this.infoService
-          .setCharacteristic(Characteristic.Manufacturer, "Opensource Community")
-          .setCharacteristic(Characteristic.Model, "Firebase GarageDoorOpener")
-          .setCharacteristic(Characteristic.SerialNumber, "Version 1.0.0");
+            .setCharacteristic(Characteristic.Manufacturer, "Opensource Community")
+            .setCharacteristic(Characteristic.Model, "Firebase GarageDoorOpener")
+            .setCharacteristic(Characteristic.SerialNumber, "Version 1.0.0");
             
         return [this.garageDoorOpener, this.infoService];
     }
