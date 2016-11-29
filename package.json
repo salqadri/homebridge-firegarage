@@ -1,6 +1,6 @@
 {
   "name": "homebridge-firegarage",
-  "version": "0.0.4",
+  "version": "0.0.1",
   "description": "Homebridge Garage Plugin for Firebase",
   "main": "index.js",
   "scripts": {
