@@ -111,15 +111,16 @@ class fireGarage {
     }
     
     setTargetState(val, callback) {
-    var self = this;
+	var self = this;
         this.log("firegarage: setTargetState " + val);
-        this._db.ref(this.target_state_path).set(val).then(function() {
-            self._db.ref(self.trigger_path).set(1).then(function() {
-                    setTimeout(function() {
+	var updates = {};
+	updates[self.target_state_path] = val;
+	updates[self.trigger_path] = 1;
+        this._db.ref().update(updates).then(function() {
+                setTimeout(function() {
                     self._db.ref(self.trigger_path).set(0);
                     callback(null, val);
                 }, 500);
-            });
         });
     }
     
