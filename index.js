@@ -1,6 +1,6 @@
 const path_RE = /\{\$[^${]+\}/g;
 var Service, Characteristic, DoorState;
-var firebase = require('firebase');
+var admin = require('firebase-admin');
 
 module.exports = function(homebridge) {
     Service = homebridge.hap.Service;
@@ -23,71 +23,21 @@ class fireGarage {
         this.trigger_path = config.trigger_path;
         this.auth_method = config.auth_method;
         this.auth_credentials = config.auth_credentials;
+        this.service_account = config.service_account;
         this._state = false;
         
-        var config = {
-            apiKey: this.api_key,
-            authDomain: this.auth_domain,
-            databaseURL: this.server
-        };
-        firebase.initializeApp(config);
-        this._db = firebase.database();
-        this._auth = firebase.auth();
-
-        this._auth.onAuthStateChanged(function(user) {
-            if (user) {
-                // User signed in!
-                var uid = user.uid;
-                self.log("firegarage: Authenticated");
-                var paths = [self.target_state_path, self.current_state_path, self.trigger_path];
-                for (var i = 0; i < paths.length; i++) {
-                    //Do something
-                    paths[i] = paths[i].replace("{$uid}", uid);
-                }
-                self._db.ref(self.current_state_path).on("value", function(snapshot) {
-                    var val = snapshot.val();
-                    self.log("State of garage changed: " + val);
-                    self.currentDoorState.setValue(val);
-                    self.targetDoorState.setValue(val);
-                });
-            } else {
-                // User logged out
-                self._authorize();
-            }
+        admin.initializeApp({
+          credential: admin.credential.cert(self.service_account),
+          databaseURL: self.server
         });
-    }
-    
-    _authorize() {
-        var self = this;
-        switch (this.auth_method) {
-            case 'password':
-                self.log("firegarage: authWithPassword");
-                self._auth.signInWithEmailAndPassword(self.auth_credentials["email"], self.auth_credentials["password"]).catch(function(error) {
-                    // Handle Errors here.
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
-                    self.log("Auth Error " + errorCode + ": " + error.message);
-                });
-                break;
-            case 'customtoken':
-                self.log("firegarage: authWithCustomToken");
-                firebase.auth().signInWithCustomToken(self.auth_credentials).catch(function(error) {
-                    // Handle Errors here.
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
-                    self.log("Auth Error " + errorCode + ": " + error.message);
-                });
-                break;
-            case 'anonymously':
-                self.log("firegarage: authAnonymously");
-                firebase.auth().signInAnonymously().catch(function(error) {
-                    // Handle Errors here.
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
-                    self.log("Auth Error " + errorCode + ": " + error.message);
-                });
-                break;
-        }
+        this._db = admin.database();
+
+        this._db.ref(self.current_state_path).on("value", function(snapshot) {
+            var val = snapshot.val();
+            self.log("State of garage changed: " + val);
+            self.currentDoorState.setValue(val);
+            self.targetDoorState.setValue(val);
+        });
     }
 
     getTargetState(callback) {
